@@ -1,0 +1,53 @@
+@font-face {
+    font-family: "Computer Modern";
+    src: url("cmu.serif-roman.ttf") format("truetype");
+}
+
+*,body:not(textarea),div.mathfont,div.mathfont p {
+    font-family: "Computer Modern", serif;
+}
+
+/*note to future self:this MUST be kept after the body{rule*/
+p:not(div.mathfont>p), button,input {
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    font-variation-settings:
+        "wdth" 75;
+    /*font-stretch: 50%;*/
+
+}
+input[type="number"]{
+    width: 6ch;
+}
+
+#game{
+    background-color: #e0e0f0;
+    border-radius: 5px;
+    display:flex;
+    flex-direction: row;
+    gap: 40px;
+    width: auto;
+    padding: 20px; 
+    margin: 70px;
+}
+.center{
+    display: block;
+    text-align: center;
+    margin-inline: auto;
+}
+
+/* Ensure MathQuill static math centers correctly inside .center containers */
+.center > * { display: inline-block; }
+.center .math { display: inline-block; }
+.center .math .mq,
+.center .math .mq-root-block,
+.center .math .mq-root,
+.center .math .mq-static-block,
+.center .math .mathquill-static-math {
+    display: inline-block;
+}
+code,textarea {
+    font-family: "Courier New", monospace !important;
+}

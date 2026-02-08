@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thingy</title>
+    <link rel="stylesheet" href="index.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wdth,wght@0,75,100..900;1,75,100..900&display=swap" rel="stylesheet">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+ 
+    <script src="https://cdn.jsdelivr.net/npm/mathquill/build/mathquill.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mathquill/build/mathquill.css" />
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof MathQuill === 'undefined') {
+            console.warn('MathQuill not loaded');
+            return;
+        }
+        var MQ = MathQuill.getInterface(2);
+        var mathFields = document.querySelectorAll('.math');
+        mathFields.forEach(function(el){
+            MQ.StaticMath(el);
+        });
+    });
+    </script>
+</head>
+
+<body>
+    <script src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=4ee12042cac34365bc5064850e99f74f"></script>
+    <h1>Guess Who? Simulator</h1>
+    <h2>The optimal strategy for Guess Who (or number guessing game) is NOT binary search!</h2>
+    <p>...unlike what common wisdom or this <a href="https://www.youtube.com/shorts/l9tOJy-IAvM">one particular Mark Rober video</a> suggests.</p>
+    <p>Based on <a href="https://arxiv.org/abs/1509.03327">this research paper 	arXiv:1509.03327v3</a></p>
+    <br>
+    <p>Here, you can play against the computer (playing the optimal strategy)</p>
+    <p>If for some reason you want to know what the computer choose, check console log.</p>
+    <p>If you do not do that, then the computer will win against binary search (mark rober strategy) <span class="math">86.05\%</span> of the time. (bounds 100)</p>
+    <p>In a best of 5 that works out to an <span class="math">97.82\%</span> winrate against Mark Rober!</p>
+    <p><strong>Scroll down for graphs and the optimal strategy</strong></p>
+    <p>Number bounds: 1 to <input type="number" placeholder="20" id="bounds"></p>
+    <p>Choose or <button id="randomize">Randomize</button> your number <input type="number" id="choosenin" placeholder="1"> (the computer does not know this)</p>
+     
+    <p></p><button id="start">Start/Restart</button> <button id="resetstats">Reset stats</button></p>
+    <p>Or, <button id="auto">Automate</button> <input type="number" id="btimes" placeholder="100"> times</p>
+    <textarea id="code" cols="65" rows="10">
+//Binary search
+//(not optimal)
+function decideBounds(remainingHuman,remainingComputer){
+    const humanMin=remainingHuman[0];
+    const humanMax=remainingHuman[remainingHuman.length-1];
+    const middle=Math.floor((humanMin+humanMax)/2);
+    return [humanMin,middle]; //or [middle+1,max], doesn't matter
+}
+window.decideBounds = decideBounds;
+    </textarea>
+    <div id="game">
+        <div id="human">
+        <h2>Human <span id="human-winner"></span></h2>
+        <p>Choosen number: <span id="choosen1">1</span></p>
+        <p>Remaining numbers: <span id="remaining1">1,2,3,4,5,6 (6 remaining)</span></p>
+        <p>Your question: is it between <input type="number" placeholder="1" id="question1-min"> and <input type="number" placeholder="20" id="question1-max">?</p>
+        <p>Last question: <span id="question1">is it between 1 and 20?</span>, answer: <span id="answer1">YES!</span></p>
+        <button id="ask">Ask/Submit</button>
+        </div>
+        <div id="computer" style="flex:1">
+        <h2>Computer <span id="computer-winner">WINNER!</span></h2>
+        <p>Choosen number: <span id="choosen2">???</span> <!--reveal when game ends--></p>
+        <p>Remaining numbers: <span id="remaining2">1,2,3,4,5,6 (6 remaining)</span></p>
+        <p>Asked question: <span id="question2">is it between 1 and 20?</span></p>
+        <p>Answer: <span id="answer2">YES!</span></p>
+        </div>
+        <div style="margin-left:auto">
+            <h2>Stats</h2>
+            <p>Total games: <span id="total-games">0</span></p>
+            <p>Human wins: <span id="human-wins">0</span></p>
+            <p>Computer wins: <span id="computer-wins">0</span>
+        </div>
+    </div>
+    <p>Graph:</p>
+    <div id="calculator" style="width: 400px; height: 400px;"></div>
+    <script src="script.js"></script>
+
+
+    <h1>The optimal strategy</h1>
+    <p>Let <span class="math">b^{*}(n,m)</span> be the optimal "bid size" (how many numbers should the question contain) for player 1, where player 1 has <span class="math">n</span> numbers remaining and player 2 has <span class="math">m</span> numbers remaining.</p>
+    <p>Let <span class="math">p^{*}(n,m)</span> be the probability that player 1 will win if both players are using the optimal strategy and player 1 has <span class="math">n</span> numbers remaining and player 2 has <span class="math">m</span> numbers remaining.</p>
+    <p>If <span class="math">n\ge 2^{k+1}+1</span> while <span class="math">2^{k}+1\le m\le 2^{k+1}</span> for some <span class="math">k \in \mathbb{N}</span> (i.e. <span class="math">k=\lfloor\log_{2}(m-1)\rfloor</span>), then player 1 is in the weeds and must make a bold move to catch up!</p>
+    <div class="center"><span class="math">b^{*}(n,m)=2^{k}</span> or <span class="math">2^{\lfloor\log_{2}(m-1)\rfloor}</span></div>
+    <div class="center"><span class="math">p^{*}(n,m)=\frac{2^{k+1}}{n}-\frac{2}{3}\cdot\frac{2^{2k+1}+1}{nm}</span></div>
+    <p>If <span class="math">2^{k}+1\le n \le 2^{k+1}</span> while <span class="math">2^{k}+1\le m\le 2^{k+1}</span> for some <span class="math">k \in \mathbb{N}</span>, then player 1 has the upper hand an can afford to do low-risk moves</p>
+    <div class="center"><span class="math">b^{*}(n,m)=\lfloor\frac{n}{2}\rfloor</span></div>
+    <div class="center"><span class="math">p^{*}(n,m)=1-\frac{2^{k}}{m}+\frac{2}{3}\cdot\frac{2^{2k}+2}{nm}</span></div>
+    <h1>Proof</h1>
+    <p><span class="math">p^{*}</span> and <span class="math">b^{*}</span> satisfy the following recurrence relation</p>
+    <div class="center"><span class="math">p^{*}(n,m)  =  \max_{b\in\left[1,n-1\right]}\left\{1-\frac{b}{n}p^{*}(m,b)-\frac{n-b}{n}p^{*}(m,n-b)\right\}</span></div>
+    <div class="center"><span class="math">b^{*}(n,m)  =  \arg \max_{b\in\left[1,n-1\right]}\left\{1-\frac{b}{n}p^{*}(m,b)-\frac{n-b}{n}p^{*}(m,n-b)\right\}</span></div>
+    <p><em>If the argmax is not unique, any <span class="math">b</span> that maximizes the function will work for the optimal strategy</em></p>
+    <p>If this seems confusing,</p>
+    <p>
+        <ul>
+            <li><p>the first equation says that the probability of you winning is 1 minus the probability of the other person winning.</p></li>
+            <li><p>it then expands the "probability of other person losing" into the probability of them winning into "probability of winning if the answer is yes" and "probability of winning if the answer is no" </p></li>
+            <li><p>then it multiplies those by the probabilty of there being a yes or no answer respectively</p></li>
+            <li><p>finally, the <span class="math">\max</span> operator is added to find the case where the bid size is optimized for the highest probability of winning</p></li>
+            <li><p>for the other equation, the difference is it uses an <span class="math">\arg \max</span> instead of a <span class="math">\max</span>. this returns the value of <span class="math">b</span> in the optimal case instead of the probability</p></li>
+        </ul>
+    </p>
+    <p>Using these, we can enter the equations into a computer to solve it numerically. Then a huge proof by induction is needed to prove that this guess is correct (you can see the entire proof in the accompanying paper).</p>
+    <em><p>(yes it is that unsatisfying sorry)</p></em>
+</body>
+
+</html>

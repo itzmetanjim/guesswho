@@ -1,0 +1,2 @@
+# The ACTUAL optimal algorithm for number guessing or Guess Who
+Unlike common belief \(or [one particular Mark Rober video](https://www.youtube.com/shorts/l9tOJy-IAvM)\), the optimal algorithm for number guessing (with Yes/No questions) or Guess Who is not to ask questions that split the remaining possibilities in half (known as "binary search"). The actual optimal strategy is presented in this interactive web app.
